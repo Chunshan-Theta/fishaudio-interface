@@ -37,7 +37,7 @@ export default function TrainingAudioOnFish() {
   const [formData, setFormData] = useState({
     title: '',
     texts: '',
-    authorization: '',
+    authorization: process.env.NEXT_PUBLIC_FISH_AUDIO_TOKEN || '',
     visibility: 'public',
     type: 'tts',
     train_mode: 'fast',

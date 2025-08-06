@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 interface ModelInfo {
@@ -16,13 +16,13 @@ interface ModelInfo {
   };
 }
 
-export default function TestingAudioOnFish() {
+function TestingAudioComponent() {
   const searchParams = useSearchParams();
   const [modelId, setModelId] = useState<string>('');
   const [modelInfo, setModelInfo] = useState<ModelInfo | null>(null);
   const [formData, setFormData] = useState({
     text: '',
-    authorization: '',
+    authorization: process.env.NEXT_PUBLIC_FISH_AUDIO_TOKEN || '',
     model: 'speech-1.5',
     temperature: 0.0,
     top_p: 0.9,
@@ -407,12 +407,33 @@ export default function TestingAudioOnFish() {
             {/* 默認提示 */}
             {!audioUrl && !error && !isSubmitting && !isLoadingModel && (
               <div className="bg-gray-800 rounded-lg p-6 text-center text-gray-400">
-                填寫表單並點擊"生成語音"來創建音頻
+                填寫表單並點擊&quot;生成語音&quot;來創建音頻
               </div>
             )}
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen bg-gray-900 text-white p-6">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-2xl font-bold mb-8 text-center">文本轉語音</h1>
+        <div className="flex justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function TestingAudioOnFish() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <TestingAudioComponent />
+    </Suspense>
   );
 }
